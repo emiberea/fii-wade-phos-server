@@ -1,3 +1,4 @@
-app:
-    resource: "@AppBundle/Controller/"
+wade_core:
+    resource: "@WADECoreBundle/Controller/"
     type:     annotation
+    prefix:   /
