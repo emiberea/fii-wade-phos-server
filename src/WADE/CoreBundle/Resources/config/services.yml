@@ -1,4 +1,16 @@
 services:
-#    wade_core.example:
-#        class: WADE\CoreBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    wade_core.service.stardog:
+        class: WADE\CoreBundle\Service\StardogService
+        arguments:
+            - "@service_container"
+            - "%stardog_user%"
+            - "%stardog_password%"
+            - "%stardog_host%"
+            - "%stardog_port%"
+            - "%stardog_database_name%"
+
+    wade_core.service.dbpedia:
+        class: WADE\CoreBundle\Service\DbpediaService
+        arguments:
+            - "@service_container"
+            - "%dbpedia_endpoint%"

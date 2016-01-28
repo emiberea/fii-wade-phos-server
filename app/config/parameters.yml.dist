@@ -17,3 +17,13 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # StarDog connection
+    stardog_user:          admin
+    stardog_password:      admin
+    stardog_host:          dev.phos.com
+    stardog_port:          5820
+    stardog_database_name: phos
+
+    # Dbpedia connection
+    dbpedia_endpoint: http://dbpedia.org/sparql
