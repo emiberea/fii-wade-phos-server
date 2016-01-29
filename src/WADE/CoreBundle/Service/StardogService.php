@@ -63,7 +63,59 @@ class StardogService
             CURLOPT_HEADER => false,
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => array(
-                "Content-Type: application/x-www-form-urlencoded"
+                "Content-Type: application/x-www-form-urlencoded",
+                "Accept: application/sparql-results+json",
+            ),
+            CURLOPT_POSTFIELDS => http_build_query(array(
+                'query' => $sparqlQuery,
+            )),
+        ));
+
+        $curlResponse = curl_exec($curl);
+        $curlErr = curl_error($curl);
+        $curlErrNo = curl_errno($curl);
+
+        $this->container->get('logger')->addCritical(
+            "StarDog: cURL \$curlResp: " . print_r($curlResponse, true)
+        );
+        $this->container->get('logger')->addCritical(
+            "StarDog: cURL \$curlErr: " . print_r($curlErr, true)
+        );
+        $this->container->get('logger')->addCritical(
+            "StarDog: cURL \$curlErrNo: " . print_r($curlErrNo, true)
+        );
+
+        // TODO: remove
+//        var_dump($curlResponse);
+//        var_dump($curlErr);
+//        var_dump($curlErrNo);
+//        die;
+        return $curlResponse;
+    }
+
+    public function updateDatabase($id, $label, $info, $link)
+    {
+
+        $sparqlQuery = '
+            PREFIX dbo: <http://dbpedia.org/ontology/>
+            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+        INSERT DATA
+                { <http://phobia.vrinceanu.com/#' . $id .'>
+                           rdfs:label "' . $label .'";
+                           dbo:abstract "' . $info . '";
+                           foaf:isPrimaryTopicOf "' . $link . '" .
+               }';
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "{$this->baseUrl}update",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/x-www-form-urlencoded",
             ),
             CURLOPT_POSTFIELDS => http_build_query(array(
                 'query' => $sparqlQuery,

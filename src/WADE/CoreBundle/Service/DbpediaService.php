@@ -29,8 +29,9 @@ class DbpediaService
     public function queryPhobias()
     {
         $result = $this->sparqlClient->query(
-            'select ?label ?info ?link where{
+            'select ?id ?label ?info ?link where{
                 ?phobia dct:subject dbc:Phobias .
+                ?phobia dbo:wikiPageID ?id .
                 ?phobia rdfs:label ?label .
                 ?phobia dbo:abstract ?info .
                 ?phobia foaf:isPrimaryTopicOf ?link
