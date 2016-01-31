@@ -1,4 +1,5 @@
 services:
+    # Services
     wade_core.service.stardog:
         class: WADE\CoreBundle\Service\StardogService
         arguments:
@@ -14,3 +15,16 @@ services:
         arguments:
             - "@service_container"
             - "%dbpedia_endpoint%"
+
+    # Managers
+    wade_core.manager.phobia_manager:
+        class: WADE\CoreBundle\Manager\PhobiaManager
+        arguments:
+            - "@service_container"
+            - "@wade_core.service.stardog"
+
+    wade_core.manager.user_manager:
+        class: WADE\CoreBundle\Manager\UserManager
+        arguments:
+            - "@service_container"
+            - "@wade_core.service.stardog"

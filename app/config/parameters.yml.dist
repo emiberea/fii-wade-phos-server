@@ -23,7 +23,7 @@ parameters:
     stardog_password:      admin
     stardog_host:          dev.phos.com
     stardog_port:          5820
-    stardog_database_name: phos
+    stardog_database_name: phos_dev
 
     # Dbpedia connection
     dbpedia_endpoint: http://dbpedia.org/sparql

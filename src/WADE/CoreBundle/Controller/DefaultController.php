@@ -4,6 +4,7 @@ namespace WADE\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use EasyRdf_Serialiser_Arc;
 
 class DefaultController extends Controller
 {
@@ -12,10 +13,10 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        $value = $this->get('wade_core.manager.user_manager')->insertUser('');
 
-        $x = $this->get('wade_core.service.stardog')->updateDatabase('');
         return $this->render('WADECoreBundle:Default:index.html.twig', array(
-            'json' => $x,
+            'value' => $value,
         ));
     }
 
@@ -38,5 +39,43 @@ class DefaultController extends Controller
         }
 
         return $this->render('WADECoreBundle:Default:importPhobia.html.twig');
+    }
+
+    /**
+     * @Route("/create-person")
+     */
+    public function createPersonAction()
+    {
+        \EasyRdf_Format::registerSerialiser('ntriples', 'EasyRdf_Serialiser_Arc');
+        \EasyRdf_Format::registerSerialiser('posh', 'EasyRdf_Serialiser_Arc');
+        \EasyRdf_Format::registerSerialiser('rdfxml', 'EasyRdf_Serialiser_Arc');
+        \EasyRdf_Format::registerSerialiser('turtle', 'EasyRdf_Serialiser_Arc');
+
+        \EasyRdf_Namespace::set('foaf', 'http://xmlns.com/foaf/0.1/');
+
+        $uri = 'http://www.example.com/emi#me';
+        $name = 'Emi Berea';
+        $emailStr = 'emi.berea@gmail.com';
+        $homepageStr = 'http://bereae.me/';
+
+        $graph = new \EasyRdf_Graph();
+        # 1st Technique
+        $me = $graph->resource($uri, 'foaf:Person');
+        $me->set('foaf:name', $name);
+        if ($emailStr) {
+            $email = $graph->resource("mailto:".$emailStr);
+            $me->add('foaf:mbox', $email);
+        }
+        if ($homepageStr) {
+            $homepage = $graph->resource($homepageStr);
+            $me->add('foaf:homepage', $homepage);
+        }
+
+        # Finally output the graph
+        $data = $graph->serialise('rdfxml');
+        if (!is_scalar($data)) {
+            $data = var_export($data, true);
+        }
+        var_dump($data);die;
     }
 }

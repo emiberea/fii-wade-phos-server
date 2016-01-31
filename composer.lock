@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b1859072697dc24b6dfdfdea1c08369c",
-    "content-hash": "d906fd8a08f9c93eaef89ce4cf30abae",
+    "hash": "5ab1b1a8a0d7dc53fade5b281b762492",
+    "content-hash": "96900c749a76fcd767eafb855790c62e",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1139,6 +1139,50 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "semsol/arc2",
+            "version": "2.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/semsol/arc2.git",
+                "reference": "75158bd470e264439dd6773b75f023becdeb78c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/semsol/arc2/zipball/75158bd470e264439dd6773b75f023becdeb78c4",
+                "reference": "75158bd470e264439dd6773b75f023becdeb78c4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "./",
+                    "parsers/",
+                    "serializers/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "W3C"
+            ],
+            "authors": [
+                {
+                    "name": "Benji Nowack",
+                    "email": "mail@bnowack.de",
+                    "homepage": "http://bnowack.de/"
+                }
+            ],
+            "description": "Semsol's ARC2 RDF library",
+            "homepage": "https://github.com/semsol/arc2",
+            "keywords": [
+                "RDF",
+                "sparql"
+            ],
+            "time": "2015-11-24 06:22:45"
         },
         {
             "name": "sensio/distribution-bundle",
