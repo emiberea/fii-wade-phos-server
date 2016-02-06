@@ -13,11 +13,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        $value = $this->get('wade_core.manager.user_manager')->insertUser('');
-
-        return $this->render('WADECoreBundle:Default:index.html.twig', array(
-            'value' => $value,
-        ));
+        return $this->render('WADECoreBundle:Default:index.html.twig');
     }
 
     /**
@@ -27,7 +23,7 @@ class DefaultController extends Controller
     {
         /** @var \EasyRdf_Sparql_Result $phobiaArr */
         $phobiaArr = $this->get('wade_core.service.dbpedia')->queryPhobias();
-        $stardogService = $this->get('wade_core.service.stardog');
+        $phobiaManager = $this->get('wade_core.manager.phobia_manager');
 
         foreach ($phobiaArr as $phobia) {
             $id = $phobia->id->getValue();
@@ -35,10 +31,34 @@ class DefaultController extends Controller
             $info = $phobia->info->getValue();
             $link = $phobia->link->getUri();
 
-            $stardogService->updateDatabase($id, $label, $info, $link);
+            $phobiaManager->updateDatabase($id, $label, $info, $link);
         }
 
         return $this->render('WADECoreBundle:Default:importPhobia.html.twig');
+    }
+
+    /**
+     * @Route("/create-user")
+     */
+    public function createUserAction()
+    {
+        $id = '3';
+        $email = 'emi.berea3@gmail.com';
+        $name = 'Emi Berea';
+        $password = 'password';
+
+        $user = array(
+            'id' => $id,
+            'email' => $email,
+            'name' => $name,
+            'password' => $password,
+        );
+
+        $value = $this->get('wade_core.manager.user_manager')->insertUser($user);
+
+        return $this->render('WADECoreBundle:Default:createUser.html.twig', array(
+            'value' => $value,
+        ));
     }
 
     /**

@@ -23,23 +23,38 @@ class UserManager
         $this->stardogService = $stardogService;
     }
 
-    public function insertUser($user)
+    public function findUserByEmail($user)
     {
-        $id = '2';
-        $email = 'emi.berea2@gmail.com';
-        $name = 'Emi Berea';
-        $givenName = 'Berea Emanuel-Vasile';
-        $password = 'password';
-
         $sparql = '
             PREFIX foaf: <http://xmlns.com/foaf/0.1/>
             INSERT DATA
             {
-                 <http://api.stardog.com/#' . $id .'>
-                       foaf:name "' . $name . '";
-                       foaf:mbox "' . $email .'";
-                       foaf:givenName "' . $givenName . '";
-                       foaf:sha1 "' . sha1($password) . '" .
+                 <http://api.stardog.com/#' . $user['id'] .'>
+                       foaf:mbox "' . $user['email'] .'";
+                       foaf:name "' . $user['name'] . '";
+                       foaf:sha1 "' . sha1($user['password']) . '" .
+
+           }';
+
+        $result = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_QUERY);
+
+        return $result;
+    }
+
+    /**
+     * @param $user
+     * @return mixed
+     */
+    public function insertUser($user)
+    {
+        $sparql = '
+            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+            INSERT DATA
+            {
+                 <http://api.stardog.com/#' . $user['id'] .'>
+                       foaf:mbox "' . $user['email'] .'";
+                       foaf:name "' . $user['name'] . '";
+                       foaf:sha1 "' . sha1($user['password']) . '" .
 
            }';
 

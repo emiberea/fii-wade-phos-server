@@ -21,6 +21,7 @@ services:
         class: WADE\CoreBundle\Manager\PhobiaManager
         arguments:
             - "@service_container"
+            - "@wade_core.service.dbpedia"
             - "@wade_core.service.stardog"
 
     wade_core.manager.user_manager:
