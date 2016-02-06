@@ -17,6 +17,9 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 
+            // 3rd party bundle
+            new FOS\RestBundle\FOSRestBundle(),
+
             // application bundles
             new WADE\CoreBundle\WADECoreBundle(),
         );

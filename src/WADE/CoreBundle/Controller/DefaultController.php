@@ -13,6 +13,8 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        $x = $this->get('wade_core.manager.user_manager')->findUserByEmail('emi.berea+phobia002@gmail.com');
+        var_dump($x);die;
         return $this->render('WADECoreBundle:Default:index.html.twig');
     }
 
@@ -42,10 +44,10 @@ class DefaultController extends Controller
      */
     public function createUserAction()
     {
-        $id = '3';
-        $email = 'emi.berea3@gmail.com';
-        $name = 'Emi Berea';
-        $password = 'password';
+        $id = '1';
+        $email = 'emi.berea+phobia001@gmail.com';
+        $name = 'Emi Berea phobia001qwr';
+        $password = 'passwordqwer';
 
         $user = array(
             'id' => $id,
@@ -54,11 +56,39 @@ class DefaultController extends Controller
             'password' => $password,
         );
 
-        $value = $this->get('wade_core.manager.user_manager')->insertUser($user);
+        $value = $this->get('wade_core.manager.user_manager')->createUser($user);
 
         return $this->render('WADECoreBundle:Default:createUser.html.twig', array(
             'value' => $value,
         ));
+    }
+
+    /**
+     * @Route("/update-user")
+     */
+    public function updateUserAction()
+    {
+        $id = '1';
+        $email = 'emi.berea+phobia007@gmail.com';
+        $name = 'Emi Berea phobia007';
+        $password = 'passwordqwer';
+
+        $oldUser = array(
+            'id' => $id,
+            'email' => $email,
+            'name' => $name,
+            'password' => $password,
+        );
+
+        $newUser = array(
+            'id' => $id,
+            'email' => 'emi.berea+phobia007@gmail.com',
+            'name' => 'Emi Berea phobia00777777777777777',
+            'password' => $password,
+        );
+
+        $value = $this->get('wade_core.manager.user_manager')->updateUser($oldUser, $newUser);
+        var_dump($value);die;
     }
 
     /**

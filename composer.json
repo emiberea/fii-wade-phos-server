@@ -22,7 +22,8 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "easyrdf/easyrdf": "^0.9.1",
-        "semsol/arc2": "^2.2"
+        "semsol/arc2": "^2.2",
+        "friendsofsymfony/rest-bundle": "^1.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

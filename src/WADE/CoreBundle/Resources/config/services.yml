@@ -29,3 +29,9 @@ services:
         arguments:
             - "@service_container"
             - "@wade_core.service.stardog"
+
+    # Security
+    wade_core.security.webservice_user_provider:
+        class: WADE\CoreBundle\Security\User\WebServiceUserProvider
+        arguments:
+            - "@wade_core.manager.user_manager"
