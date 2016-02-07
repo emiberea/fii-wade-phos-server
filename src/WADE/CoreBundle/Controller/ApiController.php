@@ -75,7 +75,9 @@ class ApiController extends Controller
         $view = View::create();
         $view->setFormat('json');
 
-        if (!$requestContentArr || !array_key_exists('email', $requestContentArr) || !array_key_exists('password', $requestContentArr) || !array_key_exists('name', $requestContentArr)) {
+        if (!$requestContentArr || !array_key_exists('email', $requestContentArr) || !array_key_exists('password', $requestContentArr)
+            || !array_key_exists('name', $requestContentArr) || !array_key_exists('phobias', $requestContentArr)
+        ) {
             $view->setStatusCode(400);
             $view->setData([
                 'message' => 'Bad request: JSON data is malformed.',

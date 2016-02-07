@@ -144,16 +144,35 @@ class UserManager
      */
     public function createUser($user)
     {
-        $sparql = '
-            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-            INSERT DATA
-            {
-                 <http://phobia.vrinceanu.com/user#' . $user['email'] .'>
-                       foaf:mbox "' . $user['email'] .'";
-                       foaf:name "' . $user['name'] . '";
-                       foaf:sha1 "' . sha1($user['password']) . '" .
+        if (array_key_exists('phobias', $user) && is_array($user['phobias']) && count($user['phobias']) > 0) {
+            $sparqlStatementStr = '';
+            foreach ($user['phobias'] as $phobia) {
+                $sparqlStatementStr = $sparqlStatementStr . "\n" . '<http://phobia.vrinceanu.com/remedies#hasPhobia>"' . $phobia . '";';
+            }
+            $sparqlStatementStr = rtrim($sparqlStatementStr, ';');
 
-           }';
+            $sparql = '
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                INSERT DATA
+                {
+                    <http://phobia.vrinceanu.com/user#' . $user['email'] .'>
+                        foaf:mbox "' . $user['email'] .'";
+                        foaf:name "' . $user['name'] . '";
+                        foaf:sha1 "' . sha1($user['password']) . '";' .
+                    $sparqlStatementStr .
+                '}';
+        } else {
+            $sparql = '
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                INSERT DATA
+                {
+                     <http://phobia.vrinceanu.com/user#' . $user['email'] .'>
+                           foaf:mbox "' . $user['email'] .'";
+                           foaf:name "' . $user['name'] . '";
+                           foaf:sha1 "' . sha1($user['password']) . '" .
+
+               }';
+        }
 
         $result = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_UPDATE);
 
