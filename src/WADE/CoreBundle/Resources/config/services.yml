@@ -24,6 +24,12 @@ services:
             - "@wade_core.service.dbpedia"
             - "@wade_core.service.stardog"
 
+    wade_core.manager.remedy_manager:
+        class: WADE\CoreBundle\Manager\RemedyManager
+        arguments:
+            - "@service_container"
+            - "@wade_core.service.stardog"
+
     wade_core.manager.user_manager:
         class: WADE\CoreBundle\Manager\UserManager
         arguments:
