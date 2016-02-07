@@ -83,10 +83,11 @@ class UserManager
     }
 
     /**
-     * @param $email
+     * @param $id
+     * @param string $param
      * @return array
      */
-    public function findPhobiasForUser($email)
+    public function findPhobiasForUser($id, $param = 'foaf:mbox')
     {
         $sparql = '
             PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
@@ -94,7 +95,7 @@ class UserManager
 
             SELECT ?phobia
             WHERE {
-                ?person foaf:mbox "' . $email . '" .
+                ?person ' . $param . ' "' . $id . '" .
                 ?person remedies:hasPhobia ?phobia
             }';
 
@@ -202,6 +203,73 @@ class UserManager
     }
 
     /**
+     * @param $email
+     * @param $user
+     * @return mixed
+     */
+    public function createPerson($email, $user)
+    {
+        $uniqueID = md5(uniqid() . time() . mt_rand());
+        if (array_key_exists('phobias', $user) && is_array($user['phobias']) && count($user['phobias']) > 0) {
+            $sparqlStatementStr = '';
+            foreach ($user['phobias'] as $phobia) {
+                $sparqlStatementStr = $sparqlStatementStr . "\n" . '<http://phobia.vrinceanu.com/remedies#hasPhobia>"' . $phobia . '";';
+            }
+            $sparqlStatementStr = rtrim($sparqlStatementStr, ';');
+
+            $sparql = '
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                INSERT DATA
+                {
+                     <http://phobia.vrinceanu.com/user#' . $uniqueID .'>
+                           foaf:knows <http://phobia.vrinceanu.com/user#' . $email .'>;
+                           foaf:nickname "' . $uniqueID . '";
+                           foaf:name "' . $user['name'] . '";'
+                           . $sparqlStatementStr .
+                '}';
+        } else {
+            $sparql = '
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                INSERT DATA
+                {
+                    <http://phobia.vrinceanu.com/user#' . md5(uniqid() . time() . mt_rand()) .'>
+                        foaf:knows <http://phobia.vrinceanu.com/user#' . $email .'>;
+                        foaf:nickname "' . $uniqueID . '";
+                        foaf:name "' . $user['name'] . '" .
+               }';
+        }
+
+        $result = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_UPDATE);
+
+        return $result;
+    }
+
+    /**
+     * @param $email
+     * @return mixed
+     */
+    public function getPersonsForUser($email)
+    {
+        $sparql = '
+            PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+            SELECT *
+            WHERE {
+                ?r foaf:name ?name .
+                ?r foaf:nickname ?nickname .
+                ?r foaf:knows <http://phobia.vrinceanu.com/user#' .$email .'> .
+            }';
+
+        $result = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_QUERY);
+        $personsArr = $this->processPersonJsonString($result);
+        foreach ($personsArr as $key => $person) {
+            $phobias = $this->findPhobiasForUser($person['nickname'], 'foaf:nickname');
+            $personsArr[$key]['phobias'] = $phobias;
+        }
+
+        return $personsArr;
+    }
+
+    /**
      * @param string $userJsonStr
      * @return array
      */
@@ -239,5 +307,26 @@ class UserManager
         }
 
         return $phobiaArr;
+    }
+
+    /**
+     * @param $personJsonStr
+     * @return array
+     */
+    private function processPersonJsonString($personJsonStr)
+    {
+        $responseArr = json_decode($personJsonStr, true);
+        $personRawArr = $responseArr['results']['bindings'];
+
+        $personArr = [];
+        foreach ($personRawArr as $person) {
+            $personArr[] = [
+                'id' => $person['r']['value'],
+                'name' => $person['name']['value'],
+                'nickname' => $person['nickname']['value'],
+            ];
+        }
+
+        return $personArr;
     }
 }
