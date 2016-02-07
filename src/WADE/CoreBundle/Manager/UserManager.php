@@ -84,6 +84,28 @@ class UserManager
 
     /**
      * @param $email
+     * @return array
+     */
+    public function findPhobiasForUser($email)
+    {
+        $sparql = '
+            PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+            PREFIX remedies: <http://phobia.vrinceanu.com/remedies#>
+
+            SELECT ?phobia
+            WHERE {
+                ?person foaf:mbox "' . $email . '" .
+                ?person remedies:hasPhobia ?phobia
+            }';
+
+        $sparqlResult = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_QUERY);
+        $phobiasArr = $this->processUserPhobiasJsonString($sparqlResult);
+
+        return $phobiasArr;
+    }
+
+    /**
+     * @param $email
      * @param $oldUser
      * @param $newUser
      * @return string
@@ -200,5 +222,22 @@ class UserManager
         }
 
         return $userArr;
+    }
+
+    /**
+     * @param $phobiaJsonStr
+     * @return array
+     */
+    private function processUserPhobiasJsonString($phobiaJsonStr)
+    {
+        $responseArr = json_decode($phobiaJsonStr, true);
+        $phobiaRawArr = $responseArr['results']['bindings'];
+
+        $phobiaArr = [];
+        foreach ($phobiaRawArr as $phobia) {
+            $phobiaArr[] = $phobia['phobia']['value'];
+        }
+
+        return $phobiaArr;
     }
 }

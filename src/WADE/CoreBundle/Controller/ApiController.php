@@ -135,6 +135,8 @@ class ApiController extends Controller
         $user = $userManager->findUserByEmail($email);
         if (is_array($user)) {
             if ($user['status'] === 'success') {
+                $user['data']['phobias'] = $userManager->findPhobiasForUser($email);
+
                 $view->setStatusCode(200); // 200 OK
                 $view->setData([
                     'data' => $user['data'],
