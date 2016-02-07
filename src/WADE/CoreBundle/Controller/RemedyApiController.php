@@ -55,4 +55,34 @@ class RemedyApiController extends Controller
 
         return $view;
     }
+
+    /**
+     * @Route("/symptoms/{phobia}")
+     * @Method("GET")
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function suggestSymptomsAction(Request $request, $phobia)
+    {
+        $view = View::create();
+        $view->setFormat('json');
+
+        $remedyManager = $this->get('wade_core.manager.remedy_manager');
+        $symptoms = $remedyManager->findSymptomsForPhobia($phobia);
+
+        if (is_array($symptoms)) {
+            $view->setStatusCode(200); // 200 OK
+            $view->setData([
+                'data' => $symptoms,
+                'status' => '200',
+            ]);
+
+            return $view;
+        }
+
+        $view->setStatusCode(500); // 500 Error
+
+        return $view;
+    }
 }

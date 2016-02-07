@@ -54,6 +54,27 @@ class RemedyManager
     }
 
     /**
+     * @param $phobia
+     * @return array
+     */
+    public function findSymptomsForPhobia($phobia)
+    {
+        $sparql = '
+            PREFIX remedies: <http://phobia.vrinceanu.com/remedies#>
+
+            SELECT ?symptomName
+            WHERE {
+                ?r remedies:appearsFor "' . $phobia . '" .
+                ?r remedies:symptomName ?symptomName .
+            }';
+
+        $sparqlResult = $this->stardogService->executeStatement($sparql, StardogService::EXECUTE_QUERY);
+        $symptomArr = $this->processSymptomJsonString($sparqlResult);
+
+        return $symptomArr;
+    }
+
+    /**
      * @param $remedyJsonStr
      * @return array
      */
@@ -68,5 +89,22 @@ class RemedyManager
         }
 
         return $remedyArr;
+    }
+
+    /**
+     * @param $symptomJsonStr
+     * @return array
+     */
+    private function processSymptomJsonString($symptomJsonStr)
+    {
+        $responseArr = json_decode($symptomJsonStr, true);
+        $symptomRawArr = $responseArr['results']['bindings'];
+
+        $symptomArr = [];
+        foreach ($symptomRawArr as $symptom) {
+            $symptomArr[] = $symptom['symptomName']['value'];
+        }
+
+        return $symptomArr;
     }
 }
