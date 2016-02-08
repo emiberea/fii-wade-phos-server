@@ -108,10 +108,10 @@ class UserManager
     /**
      * @param $email
      * @param $oldUser
-     * @param $newUser
+     * @param $requestData
      * @return string
      */
-    public function updateUser($email, $oldUser, $newUser)
+    public function updateUser($email, $oldUser, $requestData)
     {
         // delete
         $deleteSparql = '
@@ -121,7 +121,7 @@ class UserManager
                  <http://phobia.vrinceanu.com/user#' . $email .'>
                        foaf:mbox "' . $email .'";
                        foaf:name "' . $oldUser['name'] . '" .
-           }';
+            }';
 
         $deleteResult = $this->stardogService->executeStatement($deleteSparql, StardogService::EXECUTE_UPDATE);
 
@@ -132,12 +132,44 @@ class UserManager
             {
                  <http://phobia.vrinceanu.com/user#' . $email .'>
                        foaf:mbox "' . $email .'";
-                       foaf:name "' . $newUser['name'] . '" .
-           }';
+                       foaf:name "' . $requestData['name'] . '" .
+            }';
 
         $insertResult = $this->stardogService->executeStatement($insertSparql, StardogService::EXECUTE_UPDATE);
 
         if ($deleteResult === 'true' && $insertResult === 'true') {
+            // update phobias also
+
+            // delete old phobias
+            $oldPhobias = $this->findPhobiasForUser($email);
+            foreach ($oldPhobias as $phobia) {
+                $deleteSparql = '
+                    PREFIX remedies: <http://phobia.vrinceanu.com/remedies#>
+                    DELETE WHERE
+                    {
+                         <http://phobia.vrinceanu.com/user#' . $email .'> remedies:hasPhobia "' . $phobia . '" .
+                    }';
+
+                $deleteResult = $this->stardogService->executeStatement($deleteSparql, StardogService::EXECUTE_UPDATE);
+            }
+
+            // insert new phobias
+            $sparqlStatementStr = '';
+            foreach ($requestData['phobias'] as $phobia) {
+                $sparqlStatementStr = $sparqlStatementStr . "\n" . '<http://phobia.vrinceanu.com/remedies#hasPhobia>"' . $phobia . '";';
+            }
+            $sparqlStatementStr = rtrim($sparqlStatementStr, ';');
+
+            $insertSparql = '
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                INSERT DATA
+                {
+                     <http://phobia.vrinceanu.com/user#' . $email .'> '
+                            . $sparqlStatementStr .
+                '}';
+
+            $phobiaInsertResult = $this->stardogService->executeStatement($insertSparql, StardogService::EXECUTE_UPDATE);
+
             return 'true';
         } else {
             return 'false';
@@ -277,6 +309,9 @@ class UserManager
     {
         $responseArr = json_decode($userJsonStr, true);
         $userRawArr = $responseArr['results']['bindings'];
+        if (!$userRawArr) {
+            return [];
+        }
 
         $userArr = [];
         foreach ($userRawArr as $user) {

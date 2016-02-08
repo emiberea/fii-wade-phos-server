@@ -8,3 +8,6 @@ fos_rest:
         formats:
             json: true
             xml: true
+    exception:
+        enabled: true
+        exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
