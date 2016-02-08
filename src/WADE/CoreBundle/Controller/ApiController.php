@@ -24,7 +24,6 @@ class ApiController extends Controller
     {
         $requestContent = $request->getContent();
         $requestContentArr = json_decode($requestContent, true);
-//        var_dump($requestContentArr);die;
 
         $view = View::create();
         $view->setFormat('json');
@@ -70,7 +69,6 @@ class ApiController extends Controller
     {
         $requestContent = $request->getContent();
         $requestContentArr = json_decode($requestContent, true);
-//        var_dump($requestContentArr);die;
 
         $view = View::create();
         $view->setFormat('json');
@@ -174,7 +172,6 @@ class ApiController extends Controller
     {
         $requestContent = $request->getContent();
         $requestContentArr = json_decode($requestContent, true);
-//        var_dump($requestContentArr);die;
 
         $view = View::create();
         $view->setFormat('json');
