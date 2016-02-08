@@ -213,7 +213,7 @@ class UserManager
         if (array_key_exists('phobias', $user) && is_array($user['phobias']) && count($user['phobias']) > 0) {
             $sparqlStatementStr = '';
             foreach ($user['phobias'] as $phobia) {
-                $sparqlStatementStr = $sparqlStatementStr . "\n" . '<http://phobia.vrinceanu.com/remedies#hasPhobia>"' . $phobia . '";';
+                $sparqlStatementStr = $sparqlStatementStr . "\n" . '<http://phobia.vrinceanu.com/remedies#hasPhobia> "' . $phobia . '";';
             }
             $sparqlStatementStr = rtrim($sparqlStatementStr, ';');
 
@@ -227,6 +227,7 @@ class UserManager
                            foaf:name "' . $user['name'] . '";'
                            . $sparqlStatementStr .
                 '}';
+
         } else {
             $sparql = '
                 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -265,7 +266,6 @@ class UserManager
             $phobias = $this->findPhobiasForUser($person['nickname'], 'foaf:nickname');
             $personsArr[$key]['phobias'] = $phobias;
         }
-
         return $personsArr;
     }
 
@@ -303,7 +303,12 @@ class UserManager
 
         $phobiaArr = [];
         foreach ($phobiaRawArr as $phobia) {
-            $phobiaArr[] = $phobia['phobia']['value'];
+            $currentId = $phobia['phobia']['value'];
+            $label = explode("#", $currentId)[1];
+            $phobiaArr[] = [
+                "id" => $currentId,
+                "label" => $label
+              ];
         }
 
         return $phobiaArr;
