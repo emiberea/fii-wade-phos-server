@@ -82,7 +82,8 @@ class PersonApiController extends Controller
         $userManager = $this->get('wade_core.manager.user_manager');
         $createResult = $userManager->getPersonsForUser($email);
 
-        if (is_array($createResult) && count($createResult) > 0) {
+//        if (is_array($createResult) && count($createResult) > 0) {
+        if (is_array($createResult)) {
             $view->setStatusCode(200); // 200 OK
             $view->setData([
                 'data' => $createResult,

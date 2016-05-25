@@ -4,7 +4,6 @@ namespace WADE\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use EasyRdf_Serialiser_Arc;
 
 class DefaultController extends Controller
 {
@@ -13,13 +12,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-
-        $x = $this->get('wade_core.manager.phobia_manager')->findAllPhobias();
-        var_dump($x);
-
-        die;
-        $x = $this->get('wade_core.manager.user_manager')->findUserByEmail('emi.berea+phobia002@gmail.com');
-        var_dump($x);die;
         return $this->render('WADECoreBundle:Default:index.html.twig');
     }
 
